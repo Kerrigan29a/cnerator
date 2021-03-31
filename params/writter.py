@@ -100,12 +100,15 @@ def split_in_similar_parts(seq, amount):
 
 def write_in_multiple_files(program, args):
     includes, defines, structs, prototypes, global_vars, _, main = program.stringify_parts()
-    functions_parts = split_in_similar_parts(program.functions, args.nfiles)
+    nfiles = args.nfiles
+    if nfiles == 1 and args.nfunctions > 0:
+        nfiles = len(program.functions) // args.nfunctions + 1
+    functions_parts = split_in_similar_parts(program.functions, nfiles)
 
     if args.verbose:
         print("")
         print("*" * 80)
-        print("* WRITING IN FILES")
+        print("* WRITING IN {} FILES".format(nfiles))
         print("*" * 80)
         print("Global: {} total functions.".format(len(program.functions)))
 
@@ -203,7 +206,7 @@ def write_in_multiple_files(program, args):
 
 
 def write_in_files(program, args):
-    if args.nfiles == 1:
+    if args.nfiles == 1 and args.nfunctions == 0:
         write_in_one_file(program, args)
     else:
         write_in_multiple_files(program, args)

@@ -97,7 +97,6 @@ param_number_prob = {0: 0.10, 1: 0.20, 2: 0.20, 3: 0.20, 4: 0.20, 5: 0.05, 6: 0.
 doc['param_types_prob'] = "types of the parameters (default: all types are equally likely)"
 param_types_prob = all_types_prob
 
-# stmt_invocation_prob = {ast.FuncProc.Func: 0.2, ast.FuncProc.Proc: 0.8}
 doc['stmt_invocation_prob'] = "invocation statements to functions or procedures (default: function=88%, procedure=12%)"
 stmt_invocation_prob = {ast.FuncProc.Func: 0.88, ast.FuncProc.Proc: 0.12}
 
@@ -140,7 +139,7 @@ basic_or_compound_stmt_prob = {True: 0.7, False: 0.3}
 doc['function_basic_stmt_prob'] = "each kind of basic (no block) statement in functions (default: assignment=60%, " \
                                   "invocation=20%, increment/decrement=20%, augmented assignment=10%)"
 function_basic_stmt_prob = probs_helper.compute_proportional_prob({'assignment': 4, 'invocation': 4, 'incdec': 2,
-                        'augmented_assignment': 2, 'expression_stmt': 1})
+                        'augmented_assignment': 2, 'expression': 1})
 
 doc['function_compound_stmt_prob'] = "each kind of compound statement (with blocks) in functions " \
                                      "(equal probability for Block, If, Switch, Do, While, For)"
@@ -166,8 +165,8 @@ doc['number_stmts_func_prob'] = "number of statements in functions " \
                                 "(default: 20% for [1,4] and 10% for [5, 6])"
 number_stmts_func_prob = {1: 0.2, 2: 0.2, 3: 0.2, 4: 0.2, 5: 0.1, 6: 0.1}
 
-doc['number_stmts_block'] = "number of statements in blocks (default: 1/3 for 1, 2 and 3)"
-number_stmts_func_block = probs_helper.compute_equal_prob({1, 2, 3})
+doc['number_stmts_block_prob'] = "number of statements in blocks (default: 1/3 for 1, 2 and 3)"
+number_stmts_block_prob = probs_helper.compute_equal_prob({1, 2, 3})
 
 doc['else_body_prob'] = "probability of generating an else body for an if statement " \
                                      "(default: 50%)"

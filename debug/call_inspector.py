@@ -82,6 +82,46 @@ def _(invocation, nodes, edges, func_name, parent):
                 callinsp_visit(arg, nodes, edges, func_name, invocation)
 
 
+@callinsp_visit.register(ast.Block)
+def _(node, nodes, edges, func_name, parent):
+    for s in node.statements:
+        callinsp_visit(s, nodes, edges, func_name, node)
+
+
+@callinsp_visit.register(ast.Do)
+@callinsp_visit.register(ast.While)
+def _(node, nodes, edges, func_name, parent):
+    callinsp_visit(node.condition, nodes, edges, func_name, node)
+    for s in node.statements:
+        callinsp_visit(s, nodes, edges, func_name, node)
+
+
+@callinsp_visit.register(ast.If)
+def _(node, nodes, edges, func_name, parent):
+    callinsp_visit(node.condition, nodes, edges, func_name, node)
+    for s in node.if_statements:
+        callinsp_visit(s, nodes, edges, func_name, node)
+    for s in node.else_statements:
+        callinsp_visit(s, nodes, edges, func_name, node)
+
+
+@callinsp_visit.register(ast.For)
+def _(node, nodes, edges, func_name, parent):
+    callinsp_visit(node.initialization, nodes, edges, func_name, node)
+    callinsp_visit(node.condition, nodes, edges, func_name, node)
+    callinsp_visit(node.increment, nodes, edges, func_name, node)
+    for s in node.statements:
+        callinsp_visit(s, nodes, edges, func_name, node)
+
+
+@callinsp_visit.register(ast.Switch)
+def _(node, nodes, edges, func_name, parent):
+    callinsp_visit(node.condition, nodes, edges, func_name, node)
+    for ss in node.cases.values():
+        for s in ss:
+            callinsp_visit(s, nodes, edges, func_name, node)
+
+
 @callinsp_visit.register(ast.BinaryExpression)
 @callinsp_visit.register(ast.Assignment)
 @callinsp_visit.register(ast.ArrayAccessExpression)
@@ -97,5 +137,6 @@ def _(node, nodes, edges, func_name, parent):
 @callinsp_visit.register(ast.Literal)
 @callinsp_visit.register(ast.Variable)
 @callinsp_visit.register(ast.Label)
+@callinsp_visit.register(ast.Break)
 def _(node, nodes, edges, func_name, parent):
     pass

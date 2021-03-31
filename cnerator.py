@@ -36,13 +36,16 @@ def run(args):
         from core import probs
         probabilities = json_probs.parse_probabilities_specification_json_file(args.probsfile)
         probs.set_probabilities(probabilities)
+    
+    # Load all the hook modules
+    modules = get_modules_to_import(args.hooks)
 
     # Process the json file to create functions, or generates a program using the probabilities defined
     if args.functions:  # if a json file was passed, it defines the functions to be generated
-        dictionary = parameters.parse_function_specification_json_file(args.functions)
-        program = core.generators.generate_program_with_function_distribution(dictionary, args, remove_unwanted_functions=True)
+        distribution = parameters.parse_function_specification_json_file(args.functions)
+        program = core.generators.generate_prog_with_function_distribution(modules, distribution, args, remove_unwanted_functions=True)
     else:  # otherwise, a random program is generated, considering the specified probabilities
-        program = core.generators.generate_program()
+        program = core.generators.generate_prog(modules, args)
 
     # Load all the visitor modules and run them, in the same order as specified by the user
     modules = get_modules_to_import(args.visitors)

@@ -67,7 +67,7 @@ def _(literal: ast.Literal, program: ast.Program, function: ast.Function, **kwar
             global_var = program.global_vars[literal.type.type]
         except KeyError:
             print_if_verbose("NEW")
-            global_var = generators.generate_global_var(program, function, literal.type.type)
+            global_var = generators.generate_expr_global_var([], program, function, literal.type.type)
         new_literal = ast.UnaryExpression("/* PTR LITERAL */ & ", global_var, literal.type.type, post_op=False)
         print_if_verbose(new_literal)
         print_if_verbose("*" * 80)

@@ -24,8 +24,10 @@ def parse_args():
                         help="Output directory (default: %(default)s)")
     parser.add_argument("-o", "--output", metavar="NAME", default="main",
                         help="C output file name, without the .c extension (default: %(default)s)")
-    parser.add_argument("-n", "--nfiles", metavar="NUMBER", type=int, default=2,
+    parser.add_argument("-n", "--nfiles", metavar="NUMBER", type=int, default=1,
                         help="Split the program in different C files (default: %(default)s)")
+    parser.add_argument("-N", "--nfunctions", metavar="NUMBER", type=int, default=0,
+                        help="Split the program in different C files, with a maximum of N functions per file (default: %(default)s)")
     parser.add_argument("-p", "--probs", metavar="PROBS", default="",
                         help="Semicolon-separated list of probabilities and their values "
                              "(e.g., call_prob={True:0.2,False: 0.8}; param_number_prob={0:0.2,1:0.3,2:0.3,3:0.2})")
@@ -40,6 +42,9 @@ def parse_args():
     parser.add_argument("-V", "--visitors", metavar="VISITORS", default="",
                         help="Colon-separated list of visitors, in order "
                              "(e.g., visitors.func_to_proc:visitors.return_instrumentation)")
+    parser.add_argument("-H", "--hooks", metavar="HOOKS", default="",
+                        help="Colon-separated list of hooks, in order "
+                             "(e.g., hooks.one_hook:hooks.another_hook)")
     parser.add_argument("-v", "--verbose", action="store_true",
                         help="Verbose messages (default: %(default)s)")
     parser.add_argument("-d", "--debug", action="store_true",
@@ -51,19 +56,19 @@ def parse_args():
 
 
 
-def get_modules_to_import(vst_param: str) -> List:
-    """Returns the list of visitors to import, given the args.visitors option"""
+def get_modules_to_import(spell: str) -> List:
+    """Imports all the modules listed in a colon-separated string"""
     import importlib
-    params = vst_param.split(":")
+    params = spell.split(":")
     try:
-        modules = [importlib.import_module(visitor_module_name) for visitor_module_name in params
-                    if len(visitor_module_name.replace(" ", "")) > 0]
+        modules = [importlib.import_module(module_name) for module_name in params
+                    if len(module_name.replace(" ", "")) > 0]
         return modules
     except Exception as error:
         import core
-        core.utils.print_to_std_error(f"Error parsing the -V param ({vst_param}).\n"
+        core.utils.print_to_std_error(f"Error parsing colon-separated list ({spell}).\n"
                            f"Exception message: {error}.\n"
-                           f"Example format visitors.func_to_proc:visitors.return_instrumentation.")
+                           f"Example format: path.to.module1:path.to.module2:path.to.module3")
     return list()
 
 

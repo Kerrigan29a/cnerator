@@ -42,7 +42,11 @@ These are the command line arguments provided by Cnerator (all of them are optio
     Each compilation unit is a pair of `.c` and `.h` files. 
     A compilation unit can be compiled independently, 
     even though they commonly depend on other compilation units.
-    The default value is 2.
+    The default value is 1.
+
+* `-N NUMBER` or `--nfunctions NUMBER`: Splits the output in different compilation units with a maximum of `NUMBER`.
+    Due to retrocompatibility, if `-n NUMBER` or `--nfiles NUMBER` is used to set it greater than 1, this option is ignored.
+    The default value is 0.
                         
 * `-r RECURSION_LIMIT` or `--recursion RECURSION_LIMIT`: Defines the maximum number of
     Python recursive invocations. This parameter may be modified when massive codebases
@@ -197,7 +201,7 @@ The following JSON file shows an example:
       "invocation": 0.4,
       "augmented_assignment": 0.15,
       "incdec": 0.1,
-      "expression_stmt": 0.05
+      "expression": 0.05
    },
    "array_literal_initialization_prob": {
       "True": 0.1, "False": 0.9

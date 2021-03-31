@@ -54,7 +54,7 @@ def _(invocation: ast.Invocation, targets: List[str], function: ast.Function, is
             return None
         # If invocation is an expression
         else:
-            literal = generators.generate_literal(
+            literal = generators.generate_expr_literal([],
                 _program, function, invocation.return_type, from_declaration=False)
             if get_app_args().verbose:
                 print("{} Subs call {} -> ({}) {}".format(
