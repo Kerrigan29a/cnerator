@@ -86,8 +86,14 @@ These are the command line arguments provided by Cnerator (all of them are optio
     generates the final C source code.
     An example value of `VISITORS` is `visitors.func_to_proc:visitors.return_instrumentation`.
     The `visitors` directory provides different examples of visitor implementations.
-    A brief description of how to implement of such visitors is presented in the
+    A brief description of how to implement such visitors is presented in the
     [post-processing specification files](#post-processing-specification-files) section.
+
+* `-H HOOKS` or `--hooks HOOKS`: An ordered colon-separated list of hooks to
+    call while the program is generating the AST. This is useful to change probabilities dinamically.
+    The `hooks` directory provides different examples.
+    A brief description of how to implement such hooks is presented in the
+    [hooks specification files](#hooks-specification-files) section.
      
      
 
@@ -328,5 +334,38 @@ The previous code is an instance of an introspective implementation of the _Visi
 The `visit` annotations indicate the AST node to be traversed.
 
 
+### Hooks specification files
+
+Hooks allow the user to execute code while generating the AST representation of the program. This is useful, for example, to change dynamically the probabilities that moderate the generation of the program. The following code shows an example:
+
+```Python
+from core import probs, probs_helper
 
 
+def on_prog(args):
+    pass
+
+def on_prog_with_function_distribution(distribution, args, remove_unwanted_functions):
+    pass
+
+
+def on_func(program, function, return_type):
+    pass
+
+
+def on_stmt(program, function, stmt_depth):
+    # Recalculate return types probs
+    d = {cls: 1 for cls in probs.return_types_prob}
+    for f in program.functions:
+        try:
+            d[f.return_type.__class__] *= 2
+        except KeyError:
+            continue
+    probs.return_types_prob = probs_helper.compute_inverse_proportional_prob(d)
+
+
+def on_expr(program, function, exp_type, exp_depth_prob):
+    pass
+```
+
+This code recalculates the probability of generating a function returning a given type based on the number of functions already generated.
