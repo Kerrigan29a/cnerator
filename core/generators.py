@@ -402,11 +402,6 @@ def generate_stmt_return(hooks, program, function, exp=None):
     if isinstance(c_type, ast.SignedInt) and probs_helper.random_value(probs.int_emulate_bool):
         value = probs_helper.random_value({0: 0.5, 1: 0.5})
         if not exp:
-    if isinstance(c_type, ast.Void):
-        return ast.Return()
-    if isinstance(c_type, ast.SignedInt) and probs_helper.random_value(probs.int_emulate_bool):
-        value = probs_helper.random_value({0: 0.5, 1: 0.5})
-        if not exp:
             exp = ast.Literal("/* EMULATED BOOL LITERAL */ ({}) {}".format(c_type.name, value), c_type)
         return ast.Return(exp, c_type)
     else:
