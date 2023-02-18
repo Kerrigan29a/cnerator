@@ -482,7 +482,7 @@ class Program(ASTNode):
         index = {s.name: s for s in self.structs}
         dependencies = {s.name: set() for s in self.structs}
         for struct in self.structs:
-            for dependency in struct.struct_references:
+            for dependency in struct.referenced_structs:
                 dependencies[dependency.name].add(struct.name)
 
         # Iterate
@@ -667,34 +667,37 @@ class Struct(Type):
     def __init__(self, name, *fields):
         self._name = name
         self.fields = []
-        self.blacklisted = set([self])
+        self._referenced_structs = set([self])
         for f, t in fields:
             self.add_field(f, t)
 
     def __hash__(self):
         return self._name.__hash__()
 
-    def add_field(self, field, _type):
+    def add_field(self, field, t):
         # Check not circular reference
-        assert not self.check_circular_reference(_type)
+        assert not self.check_circular_reference(t)
         # Blacklist the current type and the previous ones
-        if _type.name.startswith("struct"):
-            _type.blacklisted.add(self)
-        elif _type.name.startswith("array") and _type.type.name.startswith("struct"):
-            _type.type.blacklisted.add(self)
+        self.blacklist_self_in_referenced_struct(t)
         # Append the field
-        self.fields.append([field, _type])
+        self.fields.append([field, t])
+    
+    def blacklist_self_in_referenced_struct(self, t):
+        if isinstance(t, Struct):
+            t._referenced_structs.add(self)
+        elif isinstance(t, (Array, Pointer)):
+            self.blacklist_self_in_referenced_struct(t.type)
 
     @property
-    def struct_references(self):
-        return [t for t in self.blacklisted if t != self]
+    def referenced_structs(self):
+        return [t for t in self._referenced_structs if t != self]
 
-    def check_circular_reference(self, _type):
-        if _type.name.startswith("array") and _type.type.name.startswith("struct"):
-            _type = _type.type
-        if _type in self.blacklisted:
+    def check_circular_reference(self, t):
+        if t in self._referenced_structs:
             return True
-        return any(t.check_circular_reference(_type) for t in self.blacklisted if t != self)
+        if isinstance(t, (Array, Pointer)):
+            return self.check_circular_reference(t.type)
+        return any(s.check_circular_reference(t) for s in self._referenced_structs if s != self)
 
     def get_type_by_field(self, field):
         for f, t in self.fields:
