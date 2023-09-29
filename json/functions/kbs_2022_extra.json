@@ -1,0 +1,52 @@
+{
+  "void": {
+    "total": 100,
+    "condition": "lambda f: isinstance(f.return_type, ast.Void)",
+    "type": "Void"
+  },
+  "bool": {
+    "total": 100,
+    "condition": "lambda f: isinstance(f.return_type, ast.Bool)",
+    "type": "Bool"
+  },
+  "char": {
+    "total": 100,
+    "condition": "lambda f: isinstance(f.return_type, ast.SignedChar)",
+    "type": "SignedChar"
+  },
+  "short": {
+    "total": 100,
+    "condition": "lambda f: isinstance(f.return_type, ast.SignedShortInt)",
+    "type": "SignedShortInt"
+  },
+  "int": {
+    "total": 100,
+    "condition": "lambda f: isinstance(f.return_type, ast.SignedInt)",
+    "type": "SignedInt"
+  },
+  "long_long": {
+    "total": 100,
+    "condition": "lambda f: isinstance(f.return_type, ast.SignedLongLongInt)",
+    "type": "SignedLongLongInt"
+  },
+  "float": {
+    "total": 100,
+    "condition": "lambda f: isinstance(f.return_type, ast.Float)",
+    "type": "Float"
+  },
+  "double": {
+    "total": 100,
+    "condition": "lambda f: isinstance(f.return_type, ast.Double)",
+    "type": "Double"
+  },
+  "pointer": {
+    "total": 100,
+    "condition": "lambda f: isinstance(f.return_type, ast.Pointer)",
+    "type": "Pointer"
+  },
+  "struct": {
+    "total": 100,
+    "condition": "lambda f: isinstance(f.return_type, ast.Struct)",
+    "type": "Struct"
+  }
+}
